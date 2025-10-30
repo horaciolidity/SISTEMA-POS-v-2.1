@@ -23,6 +23,7 @@
     "@zxing/library": "^0.20.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "dayjs": "^1.11.18",
     "framer-motion": "^10.16.4",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.285.0",
