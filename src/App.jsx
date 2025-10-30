@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Layout from '@/components/Layout';
 
 // 📦 Páginas principales
 import LoginPage from '@/pages/LoginPage';
@@ -28,7 +29,6 @@ function App() {
         />
       </Helmet>
 
-      {/* 🧠 Router DEBE envolver a los contextos */}
       <Router>
         <AuthProvider>
           <POSProvider>
@@ -37,81 +37,91 @@ function App() {
                 {/* Login */}
                 <Route path="/login" element={<LoginPage />} />
 
-                {/* Redirección raíz */}
-                <Route path="/" element={<Navigate to="/pos" replace />} />
+                {/* Pantalla pública del cliente */}
+                <Route path="/display" element={<CustomerDisplay />} />
 
-                {/* Punto de venta */}
+                {/* =========================
+                     🧩 RUTAS PROTEGIDAS CON LAYOUT
+                ============================ */}
                 <Route
                   path="/pos"
                   element={
                     <ProtectedRoute>
-                      <POSPage />
+                      <Layout>
+                        <POSPage />
+                      </Layout>
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Inventario */}
                 <Route
                   path="/inventory"
                   element={
                     <ProtectedRoute roles={['manager', 'admin']}>
-                      <InventoryPage />
+                      <Layout>
+                        <InventoryPage />
+                      </Layout>
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Movimientos de stock */}
                 <Route
                   path="/inventory/movements"
                   element={
                     <ProtectedRoute roles={['manager', 'admin']}>
-                      <StockMovementsView />
+                      <Layout>
+                        <StockMovementsView />
+                      </Layout>
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Clientes */}
                 <Route
                   path="/customers"
                   element={
                     <ProtectedRoute>
-                      <CustomersPage />
+                      <Layout>
+                        <CustomersPage />
+                      </Layout>
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Reportes */}
                 <Route
                   path="/reports"
                   element={
                     <ProtectedRoute roles={['manager', 'admin']}>
-                      <ReportsPage />
+                      <Layout>
+                        <ReportsPage />
+                      </Layout>
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Caja */}
                 <Route
                   path="/cash"
                   element={
                     <ProtectedRoute>
-                      <CashPage />
+                      <Layout>
+                        <CashPage />
+                      </Layout>
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Administración */}
                 <Route
                   path="/admin"
                   element={
                     <ProtectedRoute roles={['admin']}>
-                      <AdminPage />
+                      <Layout>
+                        <AdminPage />
+                      </Layout>
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Pantalla de cliente */}
-                <Route path="/display" element={<CustomerDisplay />} />
+                {/* Redirección raíz */}
+                <Route path="/" element={<Navigate to="/pos" replace />} />
 
                 {/* Fallback */}
                 <Route path="*" element={<Navigate to="/pos" replace />} />
