@@ -32,7 +32,7 @@ function App() {
       <Router>
         <AuthProvider>
           <POSProvider>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
               <Routes>
                 {/* Login */}
                 <Route path="/login" element={<LoginPage />} />
