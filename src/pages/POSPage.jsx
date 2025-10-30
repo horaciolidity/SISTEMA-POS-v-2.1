@@ -51,7 +51,7 @@ const POSPage = () => {
         </div>
 
         {/* Vista principal */}
-        <div className="h-full grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-900 transition-colors">
+         <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto transition-colors">
           {/* Panel de productos */}
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
             <POSView />

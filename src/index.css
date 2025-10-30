@@ -63,7 +63,9 @@ body,
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* evita scrolls que tapen layout */
+  overflow: auto;
+  min-height: 100vh;
+ /* evita scrolls que tapen layout */
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: 'Inter', sans-serif;
