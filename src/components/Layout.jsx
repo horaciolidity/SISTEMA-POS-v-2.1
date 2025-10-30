@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -30,11 +30,14 @@ const Layout = ({ children }) => {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Si no hay usuario logueado, redirigir a login
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
+  /* ===================== Redirección segura ===================== */
+  useEffect(() => {
+    if (!user) {
+      navigate("/login", { replace: true });
+    }
+  }, [user, navigate]);
+
+  if (!user) return null;
 
   /* ===================== Menú dinámico según rol ===================== */
   const menuItems = [
@@ -180,7 +183,7 @@ const Layout = ({ children }) => {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors p-4 lg:p-6">
           {children}
         </main>
       </div>

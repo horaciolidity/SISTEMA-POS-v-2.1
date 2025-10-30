@@ -29,10 +29,12 @@ function App() {
         />
       </Helmet>
 
+      {/* 🌐 Router envuelve todos los contextos */}
       <Router>
         <AuthProvider>
           <POSProvider>
-            <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+            {/* 🖥️ Fondo global (sin min-h-screen para no tapar Layout) */}
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 min-h-screen">
               <Routes>
                 {/* Login */}
                 <Route path="/login" element={<LoginPage />} />
@@ -41,7 +43,7 @@ function App() {
                 <Route path="/display" element={<CustomerDisplay />} />
 
                 {/* =========================
-                     🧩 RUTAS PROTEGIDAS CON LAYOUT
+                    🧩 RUTAS PROTEGIDAS CON LAYOUT
                 ============================ */}
                 <Route
                   path="/pos"
@@ -127,6 +129,7 @@ function App() {
                 <Route path="*" element={<Navigate to="/pos" replace />} />
               </Routes>
 
+              {/* Toasts globales */}
               <Toaster />
             </div>
           </POSProvider>
