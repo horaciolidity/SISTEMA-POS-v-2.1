@@ -1,8 +1,10 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================
+   🎨 Variables de tema base
+========================== */
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -26,6 +28,9 @@
   --radius: 0.5rem;
 }
 
+/* ==========================
+   🌙 Tema oscuro
+========================== */
 .dark {
   --background: 222.2 84% 4.9%;
   --foreground: 210 40% 98%;
@@ -48,16 +53,32 @@
   --ring: 262.1 83.3% 57.8%;
 }
 
-* {
-  border-color: hsl(var(--border));
-}
-
-body {
+/* ==========================
+   📐 Estructura global fija
+========================== */
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* evita scrolls que tapen layout */
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: 'Inter', sans-serif;
 }
 
+/* ==========================
+   💅 Reglas generales
+========================== */
+* {
+  border-color: hsl(var(--border));
+}
+
+/* ==========================
+   📊 Grilla del POS
+========================== */
 .pos-grid {
   display: grid;
   grid-template-columns: 1fr 400px;
@@ -72,11 +93,17 @@ body {
   }
 }
 
+/* ==========================
+   🔦 Estados visuales
+========================== */
 .barcode-scanner-active {
   border: 2px solid #10b981;
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
+/* ==========================
+   🧾 Estilos de ticket
+========================== */
 .receipt-print {
   font-family: 'Courier New', monospace;
   font-size: 12px;
@@ -84,12 +111,18 @@ body {
   max-width: 300px;
 }
 
+/* ==========================
+   💎 Efectos visuales
+========================== */
 .glass-effect {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* ==========================
+   🌈 Gradientes útiles
+========================== */
 .gradient-bg {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
@@ -102,17 +135,25 @@ body {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
+/* ==========================
+   ⚡ Animaciones
+========================== */
 .animate-pulse-slow {
   animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .cash-register-sound {
-  /* Visual feedback for cash register actions */
   animation: cashRegisterPing 0.3s ease-out;
 }
 
 @keyframes cashRegisterPing {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
