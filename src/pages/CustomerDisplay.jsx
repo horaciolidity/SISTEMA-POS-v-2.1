@@ -6,7 +6,6 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
-// 📦 Páginas principales
 import LoginPage from '@/pages/LoginPage';
 import POSPage from '@/pages/POSPage';
 import InventoryPage from '@/pages/InventoryPage';
@@ -15,9 +14,6 @@ import ReportsPage from '@/pages/ReportsPage';
 import CashPage from '@/pages/CashPage';
 import AdminPage from '@/pages/AdminPage';
 import CustomerDisplay from '@/pages/CustomerDisplay';
-
-// 📦 Nueva vista de movimientos de stock
-import StockMovementsView from '@/components/inventory/StockMovementsView';
 
 function App() {
   return (
@@ -35,13 +31,11 @@ function App() {
           <Router>
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
               <Routes>
-                {/* Login */}
+                {/* 🔐 Autenticación */}
                 <Route path="/login" element={<LoginPage />} />
-
-                {/* Redirección raíz */}
                 <Route path="/" element={<Navigate to="/pos" replace />} />
 
-                {/* Punto de venta */}
+                {/* 💵 Punto de Venta */}
                 <Route
                   path="/pos"
                   element={
@@ -51,27 +45,17 @@ function App() {
                   }
                 />
 
-                {/* Inventario */}
+                {/* 📦 Inventario */}
                 <Route
                   path="/inventory"
                   element={
-                    <ProtectedRoute roles={['manager', 'admin']}>
+                    <ProtectedRoute>
                       <InventoryPage />
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Movimientos de stock (nueva ruta independiente) */}
-                <Route
-                  path="/inventory/movements"
-                  element={
-                    <ProtectedRoute roles={['manager', 'admin']}>
-                      <StockMovementsView />
-                    </ProtectedRoute>
-                  }
-                />
-
-                {/* Clientes */}
+                {/* 👥 Clientes */}
                 <Route
                   path="/customers"
                   element={
@@ -81,17 +65,17 @@ function App() {
                   }
                 />
 
-                {/* Reportes */}
+                {/* 📊 Reportes (solo gerente y admin) */}
                 <Route
                   path="/reports"
                   element={
-                    <ProtectedRoute roles={['manager', 'admin']}>
+                    <ProtectedRoute requiredRole="manager">
                       <ReportsPage />
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Caja */}
+                {/* 🏧 Caja */}
                 <Route
                   path="/cash"
                   element={
@@ -101,21 +85,18 @@ function App() {
                   }
                 />
 
-                {/* Administración */}
+                {/* ⚙️ Administración (solo admin) */}
                 <Route
                   path="/admin"
                   element={
-                    <ProtectedRoute roles={['admin']}>
+                    <ProtectedRoute requiredRole="admin">
                       <AdminPage />
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Pantalla de cliente */}
+                {/* 🖥️ Display del cliente */}
                 <Route path="/display" element={<CustomerDisplay />} />
-
-                {/* Fallback 404 */}
-                <Route path="*" element={<Navigate to="/pos" replace />} />
               </Routes>
 
               <Toaster />

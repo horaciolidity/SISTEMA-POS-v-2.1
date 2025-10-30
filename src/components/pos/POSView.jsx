@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Scan, Camera, Plus } from 'lucide-react';
+import { Search, Scan, Camera, Plus, Monitor } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,145 +12,131 @@ import { useToast } from '@/components/ui/use-toast';
 const POSView = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showScanner, setShowScanner] = useState(false);
-  const [scannerType, setScannerType] = useState('keyboard'); // keyboard, camera
-  const { addToCart } = usePOS();
+  const [scannerType, setScannerType] = useState('keyboard'); // 'keyboard' | 'camera'
+  const [products, setProducts] = useState([]);
+  const { addToCart, calculateTotal } = usePOS();
   const { toast } = useToast();
 
-  // Mock products data
-  const [products] = useState([
-    {
-      id: '1',
-      sku: 'PROD001',
-      barcode: '1234567890123',
-      name: 'Coca Cola 500ml',
-      category: 'Bebidas',
-      price: 150.00,
-      cost: 100.00,
-      tax_rate: 0.21,
-      stock: 50,
-      min_stock: 10,
-      image_url: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=200&h=200&fit=crop'
-    },
-    {
-      id: '2',
-      sku: 'PROD002',
-      barcode: '2345678901234',
-      name: 'Pan Lactal',
-      category: 'Panadería',
-      price: 280.00,
-      cost: 200.00,
-      tax_rate: 0.21,
-      stock: 25,
-      min_stock: 5,
-      image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&h=200&fit=crop'
-    },
-    {
-      id: '3',
-      sku: 'PROD003',
-      barcode: '3456789012345',
-      name: 'Leche Entera 1L',
-      category: 'Lácteos',
-      price: 320.00,
-      cost: 250.00,
-      tax_rate: 0.21,
-      stock: 30,
-      min_stock: 8,
-      image_url: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&h=200&fit=crop'
-    },
-    {
-      id: '4',
-      sku: 'PROD004',
-      barcode: '4567890123456',
-      name: 'Arroz 1kg',
-      category: 'Almacén',
-      price: 450.00,
-      cost: 350.00,
-      tax_rate: 0.21,
-      stock: 40,
-      min_stock: 10,
-      image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&h=200&fit=crop'
+  /* === Inicializa canal de comunicación con Display del Cliente === */
+  useEffect(() => {
+    if (!window.customerDisplayChannel && 'BroadcastChannel' in window) {
+      window.customerDisplayChannel = new BroadcastChannel('customer_display');
     }
-  ]);
+    return () => window.customerDisplayChannel?.close?.();
+  }, []);
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.barcode.includes(searchTerm)
+  /* === Cargar productos desde el almacenamiento local === */
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('pos_products') || '[]');
+    setProducts(stored);
+  }, []);
+
+  /* === Filtro de búsqueda === */
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.barcode?.includes(searchTerm)
   );
 
-  // Handle keyboard barcode scanner input
+  /* === Lector de código de barras por teclado === */
   useEffect(() => {
-    let barcodeBuffer = '';
-    let lastKeyTime = Date.now();
+    if (scannerType !== 'keyboard') return;
+
+    let buffer = '';
+    let lastTime = Date.now();
 
     const handleKeyPress = (e) => {
-      const currentTime = Date.now();
-      
-      // If more than 100ms between keystrokes, reset buffer
-      if (currentTime - lastKeyTime > 100) {
-        barcodeBuffer = '';
-      }
-      
-      lastKeyTime = currentTime;
-      
-      if (e.key === 'Enter' && barcodeBuffer.length > 8) {
-        // Process barcode
-        const product = products.find(p => p.barcode === barcodeBuffer);
+      const now = Date.now();
+      if (now - lastTime > 100) buffer = '';
+      lastTime = now;
+
+      if (e.key === 'Enter' && buffer.length > 6) {
+        const product = products.find((p) => p.barcode === buffer);
         if (product) {
           addToCart(product);
+          emitCustomerDisplay(product);
           toast({
-            title: "Producto escaneado",
-            description: `${product.name} agregado al carrito`,
-            duration: 2000
+            title: '✅ Producto agregado',
+            description: `${product.name} — $${product.price?.toFixed(2)}`,
+            duration: 2000,
           });
         } else {
           toast({
-            title: "Producto no encontrado",
-            description: `Código de barras: ${barcodeBuffer}`,
-            variant: "destructive",
-            duration: 3000
+            title: 'Producto no encontrado',
+            description: `Código ${buffer}`,
+            variant: 'destructive',
+            duration: 3000,
           });
         }
-        barcodeBuffer = '';
-      } else if (e.key.length === 1 && /\d/.test(e.key)) {
-        barcodeBuffer += e.key;
+        buffer = '';
+      } else if (/\d/.test(e.key)) {
+        buffer += e.key;
       }
     };
 
-    if (scannerType === 'keyboard') {
-      window.addEventListener('keypress', handleKeyPress);
-      return () => window.removeEventListener('keypress', handleKeyPress);
-    }
-  }, [scannerType, products, addToCart, toast]);
+    window.addEventListener('keypress', handleKeyPress);
+    return () => window.removeEventListener('keypress', handleKeyPress);
+  }, [scannerType, products, addToCart]);
 
+  /* === Callback al detectar código desde cámara === */
   const handleBarcodeDetected = (barcode) => {
-    const product = products.find(p => p.barcode === barcode);
+    const product = products.find((p) => p.barcode === barcode);
     if (product) {
       addToCart(product);
+      emitCustomerDisplay(product);
       setShowScanner(false);
       toast({
-        title: "Producto escaneado",
+        title: '✅ Producto escaneado',
         description: `${product.name} agregado al carrito`,
-        duration: 2000
+        duration: 2000,
       });
     } else {
       toast({
-        title: "Producto no encontrado",
+        title: 'Producto no encontrado',
         description: `Código de barras: ${barcode}`,
-        variant: "destructive",
-        duration: 3000
+        variant: 'destructive',
       });
     }
   };
 
+  /* === Enviar datos al Display del Cliente === */
+  const emitCustomerDisplay = (lastProduct) => {
+    const total = calculateTotal();
+    if (window.customerDisplayChannel) {
+      window.customerDisplayChannel.postMessage({
+        type: 'UPDATE_DISPLAY',
+        payload: { lastProduct, total },
+      });
+    }
+  };
+
+  /* === Abrir display del cliente === */
+  const handleOpenDisplay = () => {
+    const url = `${window.location.origin}/display`;
+    window.open(url, '_blank');
+  };
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Header */}
-      <Card className="mb-4">
+      <Card className="mb-4 border-gray-200 dark:border-gray-700 dark:bg-gray-800/80">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center justify-between">
-            <span>Punto de Venta</span>
+            <span className="font-semibold text-lg text-gray-800 dark:text-gray-100">
+              Punto de Venta
+            </span>
+
             <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOpenDisplay}
+                className="flex items-center space-x-2"
+              >
+                <Monitor className="h-4 w-4" />
+                <span>Display</span>
+              </Button>
               <Button
                 variant={scannerType === 'keyboard' ? 'default' : 'outline'}
                 size="sm"
@@ -163,7 +147,7 @@ const POSView = () => {
                 <span>Teclado</span>
               </Button>
               <Button
-                variant="outline"
+                variant={scannerType === 'camera' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => {
                   setScannerType('camera');
@@ -177,25 +161,24 @@ const POSView = () => {
             </div>
           </CardTitle>
         </CardHeader>
+
         <CardContent>
-          <div className="flex space-x-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Buscar productos por nombre, SKU o código de barras..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+          <div className="flex space-x-4 items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Buscar por nombre, SKU o código..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
             </div>
             <CustomerSelector />
           </div>
         </CardContent>
       </Card>
 
-      {/* Scanner Modal */}
+      {/* Escáner (cámara) */}
       {showScanner && scannerType === 'camera' && (
         <BarcodeScanner
           onBarcodeDetected={handleBarcodeDetected}
@@ -203,13 +186,13 @@ const POSView = () => {
         />
       )}
 
-      {/* Products Grid */}
+      {/* Grilla de productos */}
       <div className="flex-1 overflow-auto">
         <ProductGrid products={filteredProducts} />
       </div>
 
-      {/* Quick Actions */}
-      <Card className="mt-4">
+      {/* Acciones rápidas */}
+      <Card className="mt-4 border-gray-200 dark:border-gray-700 dark:bg-gray-800/80">
         <CardContent className="p-4">
           <div className="flex space-x-2">
             <Button variant="outline" size="sm" className="flex-1">
