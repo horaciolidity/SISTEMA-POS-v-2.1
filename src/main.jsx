@@ -1,22 +1,14 @@
-// src/main.jsx
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { POSProvider } from "@/contexts/POSContext";
-import App from "./App";
-import "@/index.css";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from '@/App';
+import '@/index.css';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <POSProvider>
-          <App />
-          <Toaster />
-        </POSProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
