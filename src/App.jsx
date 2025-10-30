@@ -15,8 +15,6 @@ import ReportsPage from '@/pages/ReportsPage';
 import CashPage from '@/pages/CashPage';
 import AdminPage from '@/pages/AdminPage';
 import CustomerDisplay from '@/pages/CustomerDisplay';
-
-// 📦 Nueva vista de movimientos de stock
 import StockMovementsView from '@/components/inventory/StockMovementsView';
 
 function App() {
@@ -30,9 +28,10 @@ function App() {
         />
       </Helmet>
 
-      <AuthProvider>
-        <POSProvider>
-          <Router>
+      {/* 🧠 Router DEBE envolver a los contextos */}
+      <Router>
+        <AuthProvider>
+          <POSProvider>
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
               <Routes>
                 {/* Login */}
@@ -61,7 +60,7 @@ function App() {
                   }
                 />
 
-                {/* Movimientos de stock (nueva ruta independiente) */}
+                {/* Movimientos de stock */}
                 <Route
                   path="/inventory/movements"
                   element={
@@ -114,15 +113,15 @@ function App() {
                 {/* Pantalla de cliente */}
                 <Route path="/display" element={<CustomerDisplay />} />
 
-                {/* Fallback 404 */}
+                {/* Fallback */}
                 <Route path="*" element={<Navigate to="/pos" replace />} />
               </Routes>
 
               <Toaster />
             </div>
-          </Router>
-        </POSProvider>
-      </AuthProvider>
+          </POSProvider>
+        </AuthProvider>
+      </Router>
     </>
   );
 }
