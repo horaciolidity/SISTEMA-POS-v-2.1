@@ -23,108 +23,118 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Sistema POS Moderno - Dashboard</title>
+        <title>Sistema POS - Dashboard</title>
         <meta
           name="description"
-          content="Sistema de punto de venta moderno con dashboard, gestión de inventario, clientes, reportes y más."
+          content="Sistema POS moderno con dashboard, ventas, inventario, clientes y reportes."
         />
       </Helmet>
 
       <Router>
         <AuthProvider>
           <POSProvider>
-            <Layout>
-              <Routes>
-                {/* 🟣 Login (sin layout) */}
-                <Route path="/login" element={<LoginPage />} />
+            <Routes>
+              {/* === Páginas públicas (sin layout) === */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/display" element={<CustomerDisplay />} />
 
-                {/* 🟢 Pantalla pública del cliente */}
-                <Route path="/display" element={<CustomerDisplay />} />
-
-                {/* =========================
-                    🧩 RUTAS PROTEGIDAS
-                ============================ */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
+              {/* === Rutas protegidas (con layout) === */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
                       <DashboardPage />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                <Route
-                  path="/pos"
-                  element={
-                    <ProtectedRoute>
+              <Route
+                path="/pos"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
                       <POSPage />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                <Route
-                  path="/inventory"
-                  element={
-                    <ProtectedRoute roles={['manager', 'admin']}>
+              <Route
+                path="/inventory"
+                element={
+                  <ProtectedRoute roles={['manager', 'admin']}>
+                    <Layout>
                       <InventoryPage />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                <Route
-                  path="/inventory/movements"
-                  element={
-                    <ProtectedRoute roles={['manager', 'admin']}>
+              <Route
+                path="/inventory/movements"
+                element={
+                  <ProtectedRoute roles={['manager', 'admin']}>
+                    <Layout>
                       <StockMovementsView />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                <Route
-                  path="/customers"
-                  element={
-                    <ProtectedRoute>
+              <Route
+                path="/customers"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
                       <CustomersPage />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                <Route
-                  path="/reports"
-                  element={
-                    <ProtectedRoute roles={['manager', 'admin']}>
+              <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute roles={['manager', 'admin']}>
+                    <Layout>
                       <ReportsPage />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                <Route
-                  path="/cash"
-                  element={
-                    <ProtectedRoute>
+              <Route
+                path="/cash"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
                       <CashPage />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute roles={['admin']}>
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <Layout>
                       <AdminPage />
-                    </ProtectedRoute>
-                  }
-                />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
-                {/* 🏠 Redirección raíz */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              {/* === Redirección raíz === */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                {/* 🚫 Fallback */}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
+              {/* === Fallback === */}
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
 
-              <Toaster />
-            </Layout>
+            <Toaster />
           </POSProvider>
         </AuthProvider>
       </Router>
