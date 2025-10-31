@@ -1,7 +1,6 @@
 // src/pages/POSPage.jsx
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import Layout from '@/components/Layout';
 import POSView from '@/components/pos/POSView';
 import Cart from '@/components/pos/Cart';
 import CustomerSelector from '@/components/pos/CustomerSelector';
@@ -34,47 +33,45 @@ const POSPage = () => {
         />
       </Helmet>
 
-      <Layout>
-        {/* Barra superior con cliente actual */}
-        <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              💳 Punto de Venta
-            </h1>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Gestiona tus ventas en tiempo real
-            </span>
-          </div>
-
-          {/* Selector de cliente */}
-          <CustomerSelector />
+      {/* Barra superior con cliente actual */}
+      <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            💳 Punto de Venta
+          </h1>
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            Gestiona tus ventas en tiempo real
+          </span>
         </div>
 
-        {/* Vista principal */}
-         <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto transition-colors">
-          {/* Panel de productos */}
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
-            <POSView />
-          </div>
+        {/* Selector de cliente */}
+        <CustomerSelector />
+      </div>
 
-          {/* Carrito y resumen */}
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden relative">
-            {!cashSession ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100/90 dark:bg-gray-900/80 z-20 text-center p-6">
-                <AlertTriangle className="h-12 w-12 text-yellow-500 mb-3" />
-                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-                  Caja cerrada
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  Abre una caja desde la sección <strong>“Caja”</strong> para comenzar a vender.
-                </p>
-              </div>
-            ) : (
-              <Cart />
-            )}
-          </div>
+      {/* Vista principal */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto transition-colors">
+        {/* Panel de productos */}
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+          <POSView />
         </div>
-      </Layout>
+
+        {/* Carrito y resumen */}
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden relative">
+          {!cashSession ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100/90 dark:bg-gray-900/80 z-20 text-center p-6">
+              <AlertTriangle className="h-12 w-12 text-yellow-500 mb-3" />
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
+                Caja cerrada
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Abre una caja desde la sección <strong>“Caja”</strong> para comenzar a vender.
+              </p>
+            </div>
+          ) : (
+            <Cart />
+          )}
+        </div>
+      </div>
     </>
   );
 };
