@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
+  BarChart3,
   ShoppingCart,
   Package,
   Users,
-  BarChart3,
   DollarSign,
   Settings,
   LogOut,
@@ -13,15 +13,16 @@ import {
   X,
   Sun,
   Moon,
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 /**
- * Layout general del sistema POS
- * - Usa AuthContext en lugar de leer localStorage directamente
- * - Totalmente reactivo a login/logout
+ * 📐 Layout general del sistema POS
+ * - Muestra barra lateral, barra superior y tema claro/oscuro
+ * - Redirige automáticamente si no hay usuario autenticado
  */
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const Layout = ({ children }) => {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  /* ===================== Redirección segura ===================== */
+  /* ===================== 🔐 Redirección segura ===================== */
   useEffect(() => {
     if (!user) {
       navigate("/login", { replace: true });
@@ -39,14 +40,50 @@ const Layout = ({ children }) => {
 
   if (!user) return null;
 
-  /* ===================== Menú dinámico según rol ===================== */
+  /* ===================== 📋 Menú dinámico según rol ===================== */
   const menuItems = [
-    { path: "/pos", icon: ShoppingCart, label: "Punto de Venta", roles: ["cashier", "manager", "admin"] },
-    { path: "/inventory", icon: Package, label: "Inventario", roles: ["manager", "admin"] },
-    { path: "/customers", icon: Users, label: "Clientes", roles: ["cashier", "manager", "admin"] },
-    { path: "/reports", icon: BarChart3, label: "Reportes", roles: ["manager", "admin"] },
-    { path: "/cash", icon: DollarSign, label: "Caja", roles: ["cashier", "manager", "admin"] },
-    { path: "/admin", icon: Settings, label: "Administración", roles: ["admin"] },
+    {
+      path: "/dashboard",
+      icon: LayoutDashboard,
+      label: "Dashboard",
+      roles: ["cashier", "manager", "admin"],
+    },
+    {
+      path: "/pos",
+      icon: ShoppingCart,
+      label: "Punto de Venta",
+      roles: ["cashier", "manager", "admin"],
+    },
+    {
+      path: "/inventory",
+      icon: Package,
+      label: "Inventario",
+      roles: ["manager", "admin"],
+    },
+    {
+      path: "/customers",
+      icon: Users,
+      label: "Clientes",
+      roles: ["cashier", "manager", "admin"],
+    },
+    {
+      path: "/reports",
+      icon: BarChart3,
+      label: "Reportes",
+      roles: ["manager", "admin"],
+    },
+    {
+      path: "/cash",
+      icon: DollarSign,
+      label: "Caja",
+      roles: ["cashier", "manager", "admin"],
+    },
+    {
+      path: "/admin",
+      icon: Settings,
+      label: "Administración",
+      roles: ["admin"],
+    },
   ];
 
   const filteredMenuItems = menuItems.filter((item) =>
@@ -54,7 +91,7 @@ const Layout = ({ children }) => {
   );
 
   return (
-<div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-hidden">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-hidden">
       {/* === Overlay móvil === */}
       {sidebarOpen && (
         <div
@@ -71,7 +108,7 @@ const Layout = ({ children }) => {
         className="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg lg:relative lg:translate-x-0 lg:shadow-none"
       >
         <div className="flex h-full flex-col">
-          {/* Header */}
+          {/* === Header === */}
           <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
             <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
               POS Sistema
@@ -86,7 +123,7 @@ const Layout = ({ children }) => {
             </Button>
           </div>
 
-          {/* User Info */}
+          {/* === User Info === */}
           <div className="p-4 border-b dark:border-gray-700">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center text-white font-semibold">
@@ -103,7 +140,7 @@ const Layout = ({ children }) => {
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* === Navegación === */}
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {filteredMenuItems.map((item) => {
               const Icon = item.icon;
@@ -127,7 +164,7 @@ const Layout = ({ children }) => {
             })}
           </nav>
 
-          {/* Logout */}
+          {/* === Logout === */}
           <div className="p-4 border-t dark:border-gray-700">
             <Button
               variant="ghost"
@@ -143,7 +180,7 @@ const Layout = ({ children }) => {
 
       {/* === Main Content === */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
+        {/* === Top bar === */}
         <div className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 px-4 py-3 lg:px-6">
           <div className="flex items-center justify-between">
             {/* Toggle sidebar */}
@@ -182,7 +219,7 @@ const Layout = ({ children }) => {
           </div>
         </div>
 
-        {/* Page content */}
+        {/* === Contenido principal === */}
         <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors p-4 lg:p-6">
           {children}
         </main>

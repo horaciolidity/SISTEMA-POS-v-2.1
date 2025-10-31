@@ -9,6 +9,7 @@ import Layout from '@/components/Layout';
 
 // 📦 Páginas principales
 import LoginPage from '@/pages/LoginPage';
+import DashboardPage from '@/pages/DashboardPage';
 import POSPage from '@/pages/POSPage';
 import InventoryPage from '@/pages/InventoryPage';
 import CustomersPage from '@/pages/CustomersPage';
@@ -22,36 +23,41 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Sistema POS Moderno - Punto de Venta</title>
+        <title>Sistema POS Moderno - Dashboard</title>
         <meta
           name="description"
-          content="Sistema de punto de venta moderno con gestión de inventario, clientes, reportes y más"
+          content="Sistema de punto de venta moderno con dashboard, gestión de inventario, clientes, reportes y más."
         />
       </Helmet>
 
-      {/* 🌐 Router envuelve todos los contextos */}
       <Router>
         <AuthProvider>
           <POSProvider>
-            {/* 🖥️ Fondo global (sin min-h-screen para no tapar Layout) */}
-            <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 min-h-screen">
+            <Layout>
               <Routes>
-                {/* Login */}
+                {/* 🟣 Login (sin layout) */}
                 <Route path="/login" element={<LoginPage />} />
 
-                {/* Pantalla pública del cliente */}
+                {/* 🟢 Pantalla pública del cliente */}
                 <Route path="/display" element={<CustomerDisplay />} />
 
                 {/* =========================
-                    🧩 RUTAS PROTEGIDAS CON LAYOUT
+                    🧩 RUTAS PROTEGIDAS
                 ============================ */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+
                 <Route
                   path="/pos"
                   element={
                     <ProtectedRoute>
-                      <Layout>
-                        <POSPage />
-                      </Layout>
+                      <POSPage />
                     </ProtectedRoute>
                   }
                 />
@@ -60,9 +66,7 @@ function App() {
                   path="/inventory"
                   element={
                     <ProtectedRoute roles={['manager', 'admin']}>
-                      <Layout>
-                        <InventoryPage />
-                      </Layout>
+                      <InventoryPage />
                     </ProtectedRoute>
                   }
                 />
@@ -71,9 +75,7 @@ function App() {
                   path="/inventory/movements"
                   element={
                     <ProtectedRoute roles={['manager', 'admin']}>
-                      <Layout>
-                        <StockMovementsView />
-                      </Layout>
+                      <StockMovementsView />
                     </ProtectedRoute>
                   }
                 />
@@ -82,9 +84,7 @@ function App() {
                   path="/customers"
                   element={
                     <ProtectedRoute>
-                      <Layout>
-                        <CustomersPage />
-                      </Layout>
+                      <CustomersPage />
                     </ProtectedRoute>
                   }
                 />
@@ -93,9 +93,7 @@ function App() {
                   path="/reports"
                   element={
                     <ProtectedRoute roles={['manager', 'admin']}>
-                      <Layout>
-                        <ReportsPage />
-                      </Layout>
+                      <ReportsPage />
                     </ProtectedRoute>
                   }
                 />
@@ -104,9 +102,7 @@ function App() {
                   path="/cash"
                   element={
                     <ProtectedRoute>
-                      <Layout>
-                        <CashPage />
-                      </Layout>
+                      <CashPage />
                     </ProtectedRoute>
                   }
                 />
@@ -115,23 +111,20 @@ function App() {
                   path="/admin"
                   element={
                     <ProtectedRoute roles={['admin']}>
-                      <Layout>
-                        <AdminPage />
-                      </Layout>
+                      <AdminPage />
                     </ProtectedRoute>
                   }
                 />
 
-                {/* Redirección raíz */}
-                <Route path="/" element={<Navigate to="/pos" replace />} />
+                {/* 🏠 Redirección raíz */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to="/pos" replace />} />
+                {/* 🚫 Fallback */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Routes>
 
-              {/* Toasts globales */}
               <Toaster />
-            </div>
+            </Layout>
           </POSProvider>
         </AuthProvider>
       </Router>
