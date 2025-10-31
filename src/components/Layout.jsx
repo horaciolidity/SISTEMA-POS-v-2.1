@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, Outlet } from "react-router-dom"; // 👈 agregado Outlet
 import { motion } from "framer-motion";
 import {
   BarChart3,

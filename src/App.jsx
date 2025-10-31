@@ -7,7 +7,7 @@ import { POSProvider } from '@/contexts/POSContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Layout from '@/components/Layout';
 
-// 📦 Páginas principales
+// 📦 Páginas
 import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
 import POSPage from '@/pages/POSPage';
@@ -23,10 +23,10 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Sistema POS - Dashboard</title>
+        <title>Sistema POS Moderno</title>
         <meta
           name="description"
-          content="Sistema POS moderno con dashboard, ventas, inventario, clientes y reportes."
+          content="Sistema POS moderno con gestión de ventas, inventario, reportes y más."
         />
       </Helmet>
 
@@ -38,97 +38,25 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/display" element={<CustomerDisplay />} />
 
-              {/* === Rutas protegidas (con layout) === */}
+              {/* === Grupo de rutas protegidas dentro del Layout === */}
               <Route
-                path="/dashboard"
+                path="/"
                 element={
                   <ProtectedRoute>
-                    <Layout>
-                      <DashboardPage />
-                    </Layout>
+                    <Layout />
                   </ProtectedRoute>
                 }
-              />
-
-              <Route
-                path="/pos"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <POSPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/inventory"
-                element={
-                  <ProtectedRoute roles={['manager', 'admin']}>
-                    <Layout>
-                      <InventoryPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/inventory/movements"
-                element={
-                  <ProtectedRoute roles={['manager', 'admin']}>
-                    <Layout>
-                      <StockMovementsView />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/customers"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <CustomersPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/reports"
-                element={
-                  <ProtectedRoute roles={['manager', 'admin']}>
-                    <Layout>
-                      <ReportsPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/cash"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <CashPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute roles={['admin']}>
-                    <Layout>
-                      <AdminPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* === Redirección raíz === */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              >
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="pos" element={<POSPage />} />
+                <Route path="inventory" element={<InventoryPage />} />
+                <Route path="inventory/movements" element={<StockMovementsView />} />
+                <Route path="customers" element={<CustomersPage />} />
+                <Route path="reports" element={<ReportsPage />} />
+                <Route path="cash" element={<CashPage />} />
+                <Route path="admin" element={<AdminPage />} />
+              </Route>
 
               {/* === Fallback === */}
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
